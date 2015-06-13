@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>
+</title>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+function data() {
+  return {
+    "flop": $('#flop input').val(),
+    "player-1": $('#player-1 input').val(),
+    "player-2": $('#player-2 input').val(),
+    "player-3": $('#player-3 input').val(),
+    "player-4": $('#player-4 input').val(),
+    "dead": $('#dead input').val()
+  };
+}
+
+$(function() {
+  $('#go').click(function() {
+    $.getJSON("/atest", data(), function(resp) {
+      $("body").append(resp);
+    });
+  });
+});
+</script>
+</head>
+<body>
+<h1>Equity Calculator</h1>
+<table>
+<tr id='flop'>
+<td>Flop:</td><td><input /></td>
+</tr>
+<tr id='player-1'>
+<td>Player 1:</td><td><input /></td><td class='equity'></td><td class='equity_norm'></td>
+</tr>
+<tr id='player-2'>
+<td>Player 2:</td><td><input /></td><td class='equity'></td><td class='equity_norm'></td>
+</tr>
+<tr id='player-3'>
+<td>Player 3:</td><td><input /></td><td class='equity'></td><td class='equity_norm'></td>
+</tr>
+<tr id='player-4'>
+<td>Player 4:</td><td><input /></td><td class='equity'></td><td class='equity_norm'></td>
+</tr>
+<tr id='dead'>
+<td>Dead:</td><td><input /></td>
+</tr>
+</table>
+<input type='submit' id='go' />
+</body>
+</html>
