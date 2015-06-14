@@ -6,11 +6,6 @@
             [instaparse.core :as insta]
             [compojure.route :as route]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
-
 (def ranks '[A K Q J T 9 8 7 6 5 4 3 2])
 (def suits '[s d h c])
 
@@ -27,8 +22,10 @@
 
 (def grammar
   (format "HAND = CARD*
-           CARD = SUITEDRANK | RANK | RANDOM
-           SUITEDRANK = RANK SUIT
+           CARD = SUITED_RANK | RANDOM | RANK_PLUS | RANK_LIST
+           RANK_LIST = RANK | RANK','RANK_LIST
+           SUITED_RANK = RANK SUIT
+           RANK_PLUS = RANK'+'
            RANK = %s
            SUIT = %s
            RANDOM = '*'"
@@ -39,14 +36,6 @@
 (def hand
   (insta/parser
     grammar))
-
-(def setup
-  {:player-1 [:As :Ac]
-   :player-2 [:Ks :Kc]})
-
-(defn random-cards-seqs
-  [n dead]
-  (take n (shuffle (reduce disj cards dead))))
 
 (defn fill-in-random
   [hands flop dead]
@@ -89,64 +78,5 @@
        :winning-hand winner
        :winning-players (keep-indexed #(if (= (:rank %2) (:rank winner)) %1) bests)})))
 
-(defn commaify
-  [coll]
-  (apply str (interpose \, coll)))
-
-(defn summarize-hands
-  [hands]
-  (apply str
-    (for [[i hand] (map vector (range) hands)]
-      (format "<p><b>Player %s:</b>%s</p>" (inc i) (commaify hand)))))
-
-(defn summarize-flop
-  [flop]
-  (format "<p><b>Flop:</b>%s</p>" (commaify flop)))
-
-(defn summarize-win
-  [hand]
-  (str (format "<p>Winning hand was a %s.</p>" (name (:hand hand)))
-       (format "<p>Winning cards were %s.</p>" (commaify (:cards hand)))))
-
-(defn summarize-winners
-  [players]
-  (format "<p>Winners were player(s) %s</p>" (commaify (map inc players))))
-
-(defn summarize-run
-  [{:keys [hands flop winning-hand winning-players]}]
-  (apply str (summarize-hands hands)
-             (summarize-flop  flop)
-             (summarize-win   winning-hand)
-             (summarize-winners   winning-players)))
-
-(defn run-equity
-  [req]
-  {:status 200
-   :headers {}
-   :body   (str (frequencies (map :winning-players (runner 100))))})
-
-(defn run-tests
-  [req]
-  {:status 200
-   :headers {}
-   :body   (summarize-run (first (runner 100)))})
-
-(defn run-atest
-  [req]
-  {:status 200
-   :body {:foo :bar}})
-
-(defroutes poker-routes
-  (GET "/" [] "<h1>Hello World</h1>")
-  (GET "/something" [] "<h1>Hello Something</h1>")
-  (GET "/tests" [] run-tests)
-  (GET "/atest" [] run-atest)
-  (GET "/equity" [] run-equity)
-  (route/not-found "<h1>Page not found</h1>"))
-
-(def app
-  (-> poker-routes
-      (wrap-json-response)
-      (wrap-resource "public")))
 
 

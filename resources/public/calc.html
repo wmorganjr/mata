@@ -15,10 +15,23 @@ function data() {
   };
 }
 
+function fillWinners(equity, chop) {
+  $.each(["player-1", "player-2", "player-3", "player-4"], function(idx, k) {
+    $("#" + k + " .equity").text(equity[k]);
+  });
+
+  $("#chop .equity").text(chop);
+}
+
 $(function() {
   $('#go').click(function() {
-    $.getJSON("/atest", data(), function(resp) {
-      $("body").append(resp);
+    $('#message').text("Submitting request...");
+    $.getJSON("/big", data(), function(resp) {
+      console.log(resp);
+      $('#message').text("Request complete. " + resp.trials + " trials run in " + resp.time + " milliseconds.");
+      $(".equity").text("");
+      $(".chop").text("");
+      fillWinners(resp.equity, resp.chop);
     });
   });
 });
@@ -31,21 +44,25 @@ $(function() {
 <td>Flop:</td><td><input /></td>
 </tr>
 <tr id='player-1'>
-<td>Player 1:</td><td><input /></td><td class='equity'></td><td class='equity_norm'></td>
+<td>Player 1:</td><td><input /></td><td class='equity'></td><td class='chop'></td>
 </tr>
 <tr id='player-2'>
-<td>Player 2:</td><td><input /></td><td class='equity'></td><td class='equity_norm'></td>
+<td>Player 2:</td><td><input /></td><td class='equity'></td><td class='chop'></td>
 </tr>
 <tr id='player-3'>
-<td>Player 3:</td><td><input /></td><td class='equity'></td><td class='equity_norm'></td>
+<td>Player 3:</td><td><input /></td><td class='equity'></td><td class='chop'></td>
 </tr>
 <tr id='player-4'>
-<td>Player 4:</td><td><input /></td><td class='equity'></td><td class='equity_norm'></td>
+<td>Player 4:</td><td><input /></td><td class='equity'></td><td class='chop'></td>
 </tr>
 <tr id='dead'>
 <td>Dead:</td><td><input /></td>
 </tr>
+<tr id='chop'>
+<td>Chop:</td><td class='equity'></td>
+</tr>
 </table>
 <input type='submit' id='go' />
+<p id='message'></p>
 </body>
 </html>
