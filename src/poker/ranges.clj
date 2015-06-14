@@ -51,21 +51,3 @@
     {:type k
      :range (set cc)
      :cardinality (count cc)}))
-
-;(def counter (atom 0))
-;
-;(require 'poker.evaluate)
-;
-;(time
-;(let [phs (repeat 6 {:range (set (cards-in-range [:RANDOM]))
-;                     :cardinality 52})]
-;  (doseq [hand (take 1000 (repeatedly #(fill-placeholders phs)))
-;          :let [start (java.lang.System/currentTimeMillis)]]
-;    (apply poker.evaluate/evaluate hand)
-;    (swap! counter #(+ % (- (java.lang.System/currentTimeMillis) start)))))
-;)
-
-
-
-
-

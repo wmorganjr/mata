@@ -1,5 +1,6 @@
 (ns poker.server
   (:require [compojure.core :refer :all]
+            [poker.observe :as observe]
             [poker.ranges :as ranges]
             [poker.mata :as mata]
             [poker.grammar :as grammar]
@@ -10,48 +11,6 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [instaparse.core :as insta]
             [compojure.route :as route]))
-
-(defn commaify
-  [coll]
-  (apply str (interpose \, coll)))
-
-(defn summarize-hands
-  [hands]
-  (apply str
-    (for [[i hand] (map vector (range) hands)]
-      (format "<p><b>Player %s:</b>%s</p>" (inc i) (commaify hand)))))
-
-(defn summarize-flop
-  [flop]
-  (format "<p><b>Flop:</b>%s</p>" (commaify flop)))
-
-(defn summarize-win
-  [hand]
-  (str (format "<p>Winning hand was a %s.</p>" (name (:hand hand)))
-       (format "<p>Winning cards were %s.</p>" (commaify (:cards hand)))))
-
-(defn summarize-winners
-  [players]
-  (format "<p>Winners were player(s) %s</p>" (commaify (map inc players))))
-
-(defn summarize-run
-  [{:keys [hands flop winning-hand winning-players]}]
-  (apply str (summarize-hands hands)
-             (summarize-flop  flop)
-             (summarize-win   winning-hand)
-             (summarize-winners   winning-players)))
-
-;(defn run-equity
-;  [req]
-;  {:status 200
-;   :headers {}
-;   :body   (str (frequencies (map :winning-players (runner 100))))})
-;
-;(defn run-tests
-;  [req]
-;  {:status 200
-;   :headers {}
-;   :body   (summarize-run (first (runner 100)))})
 
 (def card-params
   ["player-1"
@@ -107,24 +66,25 @@
         chops (count (filter #(= :Chop (:hand (:winning-hand %))) trials))
         tot   (apply + (vals wins))
         equity (into {} (for [[k v] wins]
-                          [(str "player-" (inc k)) (format "%.2f" (double (/ v tot)))]))]
+                          [(str "player-" (inc k)) (format "%.3f" (double (/ v tot)))]))]
         
     {:winners (for [[k v] freqs]
                 {:players k
                  :count   v})
-     :chop    (format "%.2f" (double (/ chops tot)))
+     :chop    (format "%.3f" (double (/ chops tot)))
      :equity  equity
      :trials  n
      :time    (- (System/currentTimeMillis) start)}))
 
 (defn run-big
   [req]
-  (let [x (-> (:query-params req)
+  (let [trials (Long/parseLong (get (:query-params req) "trials"))
+        x (-> (:query-params req)
               (parse-params)
               (complete-with-random)
               (ranges/spec->phs)
-              (monte-carlo 1000)
-              (summarize-mc 1000))]
+              (monte-carlo trials)
+              (summarize-mc trials))]
     {:status 200
      :body x}))
 
@@ -138,22 +98,26 @@
     {:status 200
      :body {:resp x}}))
 
+(defn run-summary
+  [req]
+  (let [x (-> (:query-params req)
+              (parse-params)
+              (complete-with-random)
+              (ranges/spec->phs)
+              (monte-carlo 1)
+              (first))]
+    {:status 200
+     :body (observe/summarize-run x)}))
+
 (defroutes poker-routes
-  (GET "/" [] "<h1>Hello World</h1>")
-  (GET "/something" [] "<h1>Hello Something</h1>")
-;  (GET "/tests" [] run-tests)
+  (GET "/" [] "<a href='calc.html'>Calc</a>")
   (GET "/big" [] run-big)
   (GET "/one" [] run-one)
-;  (GET "/equity" [] run-equity)
+  (GET "/singleHand.html" [] run-summary)
   (route/not-found "<h1>Page not found</h1>"))
-
-;player-1=AsKc&flop=567&player-2=66
 
 (def app
   (-> poker-routes
       (wrap-json-response)
       (wrap-params)
       (wrap-resource "public")))
-
-
-

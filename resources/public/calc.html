@@ -11,7 +11,8 @@ function data() {
     "player-2": $('#player-2 input').val(),
     "player-3": $('#player-3 input').val(),
     "player-4": $('#player-4 input').val(),
-    "dead": $('#dead input').val()
+    "dead": $('#dead input').val(),
+    "trials": $('#trials').val()
   };
 }
 
@@ -25,6 +26,12 @@ function fillWinners(equity, chop) {
 
 $(function() {
   $('#go').click(function() {
+    var href = "singleHand.html?";
+    $.each(data(), function(k, v) {
+      href += k + "=" + v + "&"
+    });
+    $("#simulator").html("<a href='" + href + "'>Hand-by-hand simulator</a>");
+
     $('#message').text("Submitting request...");
     $.getJSON("/big", data(), function(resp) {
       console.log(resp);
@@ -62,7 +69,22 @@ $(function() {
 <td>Chop:</td><td class='equity'></td>
 </tr>
 </table>
+<select id='trials'>
+  <option>1000</option>
+  <option>5000</option>
+  <option>10000</option>
+  <option>50000</option>
+</select>
 <input type='submit' id='go' />
+<p id='simulator'></p>
 <p id='message'></p>
+<pre>
+The following hands and ranges are supported:
+Ks       The King of Spades
+K        any King
+K+       any King or Ace
+K,Q,J    any King, Queen or Jack
+*        any random card
+</pre>
 </body>
 </html>
