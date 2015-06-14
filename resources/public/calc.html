@@ -28,7 +28,7 @@ $(function() {
   $('#go').click(function() {
     var href = "singleHand.html?";
     $.each(data(), function(k, v) {
-      href += k + "=" + v + "&"
+      href += k + "=" + encodeURIComponent(v) + "&"
     });
     $("#simulator").html("<a href='" + href + "'>Hand-by-hand simulator</a>");
 
