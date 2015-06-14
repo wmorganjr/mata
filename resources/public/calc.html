@@ -34,11 +34,14 @@ $(function() {
 
     $('#message').text("Submitting request...");
     $.getJSON("/big", data(), function(resp) {
-      console.log(resp);
-      $('#message').text("Request complete. " + resp.trials + " trials run in " + resp.time + " milliseconds.");
-      $(".equity").text("");
-      $(".chop").text("");
-      fillWinners(resp.equity, resp.chop);
+      if (resp.error) {
+        $('#message').text("There was an error on the server. Try a different query and see if that fixes it. Otherwise, contact Will with this timestamp: " + resp.error);
+      } else {
+        $('#message').text("Request complete. " + resp.trials + " trials run in " + resp.time + " milliseconds.");
+        $(".equity").text("");
+        $(".chop").text("");
+        fillWinners(resp.equity, resp.chop);
+      }
     });
   });
 });

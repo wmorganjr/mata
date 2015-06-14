@@ -78,15 +78,24 @@
 
 (defn run-big
   [req]
-  (let [trials (Long/parseLong (get (:query-params req) "trials"))
-        x (-> (:query-params req)
-              (parse-params)
-              (complete-with-random)
-              (ranges/spec->phs)
-              (monte-carlo trials)
-              (summarize-mc trials))]
-    {:status 200
-     :body x}))
+  (prn "REQ" req)
+  (try
+    (let [trials (Long/parseLong (get (:query-params req) "trials"))
+          x (-> (:query-params req)
+                (parse-params)
+                (complete-with-random)
+                (ranges/spec->phs)
+                (monte-carlo trials)
+                (summarize-mc trials))]
+      (prn "RESP" x)
+      {:status 200
+       :body x})
+    (catch Exception e
+      (let [time (System/currentTimeMillis)]
+        (println time)
+        (.printStackTrace e)
+        {:status 200
+         :body   {:error time}}))))
 
 (defn run-one
   [req]
