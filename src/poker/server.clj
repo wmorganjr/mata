@@ -83,7 +83,7 @@
 
 (defn run-big
   [req]
-  (prn "REQ" req)
+  (prn "REQ" (assoc req :time (str (org.joda.time.DateTime/now))))
   (try
     (let [trials (Long/parseLong (get (:query-params req) "trials"))
           x (-> (:query-params req)
