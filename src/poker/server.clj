@@ -45,14 +45,15 @@
 
 (defn monte-carlo
   [placeholders n]
-  (for [trial (repeatedly n #(ranges/fill-placeholders placeholders))
-        :let [groups (group-by :type trial)
-              result (mata/runner {"player-1" (map :card (groups "player-1"))
-                                   "player-2" (map :card (groups "player-2"))
-                                   "player-3" (map :card (groups "player-3"))
-                                   "player-4" (map :card (groups "player-4"))
-                                   "flop"     (map :card (groups "flop"))})]]
-    result))
+  (pmap (fn [trial]
+          (let [groups (group-by :type trial)
+                result (mata/runner {"player-1" (map :card (groups "player-1"))
+                                     "player-2" (map :card (groups "player-2"))
+                                     "player-3" (map :card (groups "player-3"))
+                                     "player-4" (map :card (groups "player-4"))
+                                     "flop"     (map :card (groups "flop"))})]
+            result))
+        (repeatedly n #(ranges/fill-placeholders placeholders))))
 
 (defn summarize-mc
   [trials n]
