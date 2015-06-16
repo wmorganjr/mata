@@ -3,8 +3,8 @@
             [poker.ranges :refer :all]))
 
 (fact
-  (let [kq [:RANK_LIST [:RANK "K"] "," [:RANK_LIST [:RANK "Q"]]]
-        k  [:RANK_LIST [:RANK "K"]]]
+  (let [kq [:CARD_LIST [:RANK "K"] "," [:CARD_LIST [:RANK "Q"]]]
+        k  [:CARD_LIST [:RANK "K"]]]
     (set (cards-in-range kq)) => #{"Kh" "Ks" "Kc" "Kd" "Qs" "Qc" "Qh" "Qd"}
     (set (cards-in-range k)) => #{"Kh" "Ks" "Kc" "Kd"}))
 
@@ -23,7 +23,7 @@
    [:RANDOM]
    [:SUITED_RANK [:RANK "2"] [:SUIT "s"]] 
    [:RANK_PLUS [:RANK "K"]]
-   [:RANK_LIST [:RANK "K"] "," [:RANK_LIST [:RANK "Q"]]]])
+   [:CARD_LIST [:RANK "K"] "," [:CARD_LIST [:RANK "Q"]]]])
 
 (defn all-distinct?
   [coll]

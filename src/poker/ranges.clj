@@ -11,10 +11,14 @@
 
 (defmulti cards-in-range first)
 
-(defmethod cards-in-range :RANK_LIST
-  [[_ [_ rank] _ rank-rest]]
-  (concat (filter #(.startsWith % rank) cards)
-          (and rank-rest (cards-in-range rank-rest))))
+(defmethod cards-in-range :RANK
+  [[_ rank]]
+  (filter #(.startsWith % rank) cards))
+
+(defmethod cards-in-range :CARD_LIST
+  [[_ card-first _ card-rest]]
+  (concat (cards-in-range card-first)
+          (and card-rest (cards-in-range card-rest))))
 
 (defmethod cards-in-range :RANK_PLUS
   [[_ [_ rank]]]

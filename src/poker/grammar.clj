@@ -1,5 +1,6 @@
 (ns poker.grammar
-  (:require [instaparse.core :as insta]))
+  (:require [instaparse.core :as insta]
+            [clojure.string :as string]))
 
 (def ranks '[A K Q J T 9 8 7 6 5 4 3 2])
 (def suits '[s d h c])
@@ -17,8 +18,8 @@
 
 (def grammar
   (format "HAND = CARD*
-           CARD = SUITED_RANK | RANDOM | RANK_PLUS | RANK_LIST
-           RANK_LIST = RANK | RANK','RANK_LIST
+           CARD = RANDOM | CARD_LIST
+           CARD_LIST = RANK | RANK_PLUS | SUITED_RANK | RANK','CARD_LIST | RANK_PLUS','CARD_LIST | SUITED_RANK','CARD_LIST
            SUITED_RANK = RANK SUIT
            RANK_PLUS = RANK'+'
            RANK = %s
@@ -28,9 +29,12 @@
           ranks-grammar
           suits-grammar))
 
+(defn normalize-case
+  [s]
+  (-> s
+      (string/replace #"[akqjt]" string/upper-case)
+      (string/replace #"[SDHC]" string/lower-case)))
+
 (def parser
-  (insta/parser
-    grammar))
-
-
-
+  (comp (insta/parser grammar)
+        normalize-case))

@@ -3,7 +3,15 @@
             [poker.grammar :refer :all]))
 
 (fact
-  (parser "K+") => [:HAND [:CARD [:RANK_PLUS [:RANK "K"] "+"]]])
+  (parser "K+") => [:HAND [:CARD [:CARD_LIST [:RANK_PLUS [:RANK "K"] "+"]]]]
+  (parser "k+") => [:HAND [:CARD [:CARD_LIST [:RANK_PLUS [:RANK "K"] "+"]]]]
+
+  (parser "5s") => [:HAND [:CARD [:CARD_LIST [:SUITED_RANK [:RANK "5"] [:SUIT "s"]]]]]
+  (parser "tD") => [:HAND [:CARD [:CARD_LIST [:SUITED_RANK [:RANK "T"] [:SUIT "d"]]]]]
+
+  (parser "T,9,8") => [:HAND [:CARD [:CARD_LIST [:RANK "T"] "," [:CARD_LIST [:RANK "9"] "," [:CARD_LIST [:RANK "8"]]]]]]
+  (parser "Ts7c9s,Js,Qs,Ks,A,T") => [:HAND [:CARD [:CARD_LIST [:SUITED_RANK [:RANK "T"] [:SUIT "s"]]]] [:CARD [:CARD_LIST [:SUITED_RANK [:RANK "7"] [:SUIT "c"]]]] [:CARD [:CARD_LIST [:SUITED_RANK [:RANK "9"] [:SUIT "s"]] "," [:CARD_LIST [:SUITED_RANK [:RANK "J"] [:SUIT "s"]] "," [:CARD_LIST [:SUITED_RANK [:RANK "Q"] [:SUIT "s"]] "," [:CARD_LIST [:SUITED_RANK [:RANK "K"] [:SUIT "s"]] "," [:CARD_LIST [:RANK "A"] "," [:CARD_LIST [:RANK "T"]]]]]]]]]
+  (parser "*") => [:HAND [:CARD [:RANDOM "*"]]])
 
 (fact
   (class (parser "")) =not=> instaparse.gll.Failure
