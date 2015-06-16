@@ -66,11 +66,15 @@
         chops (count (filter #(= :Chop (:hand (:winning-hand %))) trials))
         tot   (apply + (vals wins))
         equity (into {} (for [[k v] wins]
-                          [(str "player-" (inc k)) (format "%.3f" (double (/ v tot)))]))]
+                          [(str "player-" (inc k)) (format "%.3f" (double (/ v tot)))]))
+        win    (into {} (for [[k v] freqs
+                              :when (= 1 (count k))]
+                          [(str "player-" (inc (first k))) (format "%.3f" (double (/ v n)))]))]
         
     {:winners (for [[k v] freqs]
                 {:players k
                  :count   v})
+     :win     win
      :chop    (format "%.3f" (double (/ chops tot)))
      :equity  equity
      :trials  n
