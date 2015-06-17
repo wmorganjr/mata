@@ -1,12 +1,22 @@
 (ns poker.mata
   (:require [poker.evaluate :as evaluate]))
 
+(defn eval-mata
+  [hand flop]
+  (let [rank (apply min
+               (map evaluate/calculate-hand-rank
+                 (conj
+                   (let [handv (vec hand)]
+                     (for [i (range 5)
+                           f flop]
+                       (assoc handv i f)))
+                   hand)))]
+    {:rank rank :hand (evaluate/resolve-rank-name rank)}))
+
 (defn best-hand
   [hand flop]
   (if (seq hand)
-    (let [best (->> (for [card flop]
-                      (apply evaluate/evaluate (conj hand card)))
-                    (apply min-key :rank))]
+    (let [best (eval-mata hand flop)]
       (if (< 3545 (:rank best))
         {:rank 3546
          :hand :Chop}

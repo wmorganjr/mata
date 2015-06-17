@@ -16,8 +16,7 @@
 
 (defn summarize-win
   [hand]
-  (str (format "<p>Winning hand was a %s.</p>" (name (:hand hand)))
-       (format "<p>Winning cards were %s.</p>" (commaify (:cards hand)))))
+  (format "<p>Winning hand was a %s.</p>" (name (:hand hand))))
 
 (defn summarize-winners
   [players]

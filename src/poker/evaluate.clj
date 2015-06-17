@@ -101,7 +101,7 @@
     (or (combination-to-rank q-index) false)
     ))
 
-(defn- calculate-hand-rank
+(defn calculate-hand-rank
   "Uses the following strategies to find the hand rank, in order:
     1. bit masking + lookup table for flush hands
     2. bit masking + lookup table for hands with 5 unique cards
@@ -133,13 +133,13 @@
    166 :FourOfAKind
    10 :StraightFlush})
 
-(defn- resolve-rank-name
+(defn resolve-rank-name
   "Resolves the name of a given rank"
   [hand-rank]
   (ranks (+ hand-rank (first (filter #(>= % 0) (sort (map #(- % hand-rank) (keys ranks)))))))
   )
 
-(defn- evaluate-hand
+(defn evaluate-hand
   "Evaluates a 5-card poker hand, returning a map including its name and rank"
   [& hand]
   (let [hand-rank (calculate-hand-rank hand)
