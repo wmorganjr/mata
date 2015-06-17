@@ -32,20 +32,22 @@
 (defmethod cards-in-range :RANDOM
   [_]
   cards)
-    
+
 (defn fill-placeholders
   [placeholders]
-  (let [deck (atom (vec (shuffle cards)))
-        phs  (sort-by :cardinality placeholders)]
-    (for [ph phs]
-      (let [index (first (keep-indexed (fn [index item]
-                                         (if (get (:range ph) item)
-                                           index))
-                                       @deck))
-            card  (@deck index)]
-        (swap! deck #(assoc % index nil))
-        (assoc ph
-               :card card)))))
+  (loop [[ph & phs] (sort-by :cardinality placeholders)
+         deck (shuffle cards)
+         result []
+         cards #{}]
+    (if ph
+      (let [card (first (filter #(and (not (cards %))
+                                      (get (:range ph) %))
+                                deck))]
+        (recur phs
+               (shuffle deck)
+               (conj result (assoc ph :card card))
+               (conj cards card)))
+      result)))
 
 (defn spec->phs
   [completed-spec]
