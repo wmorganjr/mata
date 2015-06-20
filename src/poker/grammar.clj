@@ -18,11 +18,13 @@
 
 (def grammar
   (format "HAND = CARD*
-           CARD = RANDOM | CARD_LIST
-           CARD_LIST = RANK | RANK_PLUS | SUITED_RANK | RANK','CARD_LIST | RANK_PLUS','CARD_LIST | SUITED_RANK','CARD_LIST
+           CARD = RANDOM | CARD_LIST | PAREN_CARD
+           PAREN_CARD = '(' CARD ')'
+           CARD_LIST = RANK | ANY_SUIT | RANK_PLUS | SUITED_RANK | RANK','CARD_LIST | RANK_PLUS','CARD_LIST | SUITED_RANK','CARD_LIST
            SUITED_RANK = RANK SUIT
            RANK_PLUS = RANK'+'
            RANK = %s
+           ANY_SUIT = '*' SUIT
            SUIT = %s
            RANDOM = '*'"
 

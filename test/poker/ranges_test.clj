@@ -16,6 +16,10 @@
   (let [deuce-spades [:SUITED_RANK [:RANK "2"] [:SUIT "s"]]]
     (set (cards-in-range deuce-spades)) => #{"2s"}))
 
+(fact
+  (let [any-spade [:CARD_LIST [:ANY_SUIT "*" [:SUIT "s"]]]]
+    (set (cards-in-range any-spade)) => #{"2s" "3s" "4s" "5s" "6s" "7s" "8s" "9s" "As" "Js" "Ks" "Qs" "Ts"}))
+
 (def ranges
   [[:RANDOM]
    [:RANDOM]

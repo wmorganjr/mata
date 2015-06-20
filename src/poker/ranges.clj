@@ -15,6 +15,18 @@
   [[_ rank]]
   (filter #(.startsWith % rank) cards))
 
+(defmethod cards-in-range :SUIT
+  [[_ rank]]
+  (filter #(.endsWith % rank) cards))
+
+(defmethod cards-in-range :ANY_SUIT
+  [[_ _ suit]]
+  (cards-in-range suit))
+
+(defmethod cards-in-range :PAREN_CARD
+  [[_ _ [_ card] _]]
+  (cards-in-range card))
+
 (defmethod cards-in-range :CARD_LIST
   [[_ card-first _ card-rest]]
   (concat (cards-in-range card-first)
