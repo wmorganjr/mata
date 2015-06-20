@@ -1,6 +1,7 @@
 (ns poker.server
   (:require [compojure.core :refer :all]
             [poker.observe :as observe]
+            [poker.runout :as runout]
             [poker.ranges :as ranges]
             [poker.mata :as mata]
             [poker.grammar :as grammar]
@@ -127,6 +128,8 @@
   (GET "/" [] "<a href='calc.html'>Calc</a>")
   (GET "/big" [] run-big)
   (GET "/one" [] run-one)
+  (GET "/runouts" [] runout/describe-trials)
+  (POST "/runouts" [] runout/post)
   (GET "/singleHand.html" [] run-summary)
   (route/not-found "<h1>Page not found</h1>"))
 

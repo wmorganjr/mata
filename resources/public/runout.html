@@ -1,0 +1,94 @@
+<html>
+<head>
+<title>
+</title>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" />
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+<script>
+
+$(function() {
+  $.fn.dataTableExt.sErrMode = 'throw';
+
+  setInterval( function () {
+    globalDataTable.ajax.reload( null, false ); // user paging is not reset on reload
+  }, 5000 );
+
+  window.globalDataTable = $('#runouts').DataTable({
+    'ajax': '/runouts',
+    'columns': [
+      {'data':'status'},
+      {'data':'p1-cards'},
+      {'data':'p2-cards'},
+      {'data':'flop'},
+      {'data':'numerator'},
+      {'data':'denominator'},
+      {'data':'result.equity.player_1'},
+      {'data':'result.equity.player_2'},
+      {'data':'result.wins.player_1'},
+      {'data':'result.wins.player_2'},
+      {'data':'result.wins.chop'},
+      {'data':'result.winpct.player_1'},
+      {'data':'result.winpct.player_2'},
+      {'data':'result.winpct.chop'}
+    ]
+  });
+  $('#submit').click(function() {
+    $('#message').text('Submitting runout...');
+    $.post('/runouts', {
+      'my-cards': $('#my-cards').val(),
+      'his-cards': $('#his-cards').val(),
+      'flop': $('#flop').val()
+    }, function(resp) {
+      if (resp.message) {
+        $('#message').text(resp.message);
+      } else {
+        $('#message').text('Runout launched.');
+      }
+    });
+  });
+});
+</script>
+</head>
+<body>
+<a href='/calc.html'>Equity Calculator</a>
+<h1>Runout Tool - Updated June 20</h1>
+<ul>
+<li>This tool will give you a complete run-out, two players with three cards
+    each and a flop</li>
+<li>Currently only three exact cards for each of the hands and the flop are
+    supported.</li>
+<li>The server can do multiple run-outs at once, but more than 2 will make
+    them all go more slowly.</li>
+</ul>
+<table>
+<b>Player 1 cards:</b><input id='my-cards' />
+<b>Player 2 cards:</b><input id='his-cards' />
+<b>Flop</b><input id='flop' />
+<table>
+<input type='submit' id='submit' />
+<div id='message'>Ready to calculate runouts</div>
+<table id='runouts'>
+<thead>
+<tr>
+<th>status</th>
+<th>p1-cards</th>
+<th>p2-cards</th>
+<th>flop</th>
+<th>trials run</th>
+<th>total trials</th>
+<th>equity player_1</th>
+<th>equity player_2</th>
+<th>wins player_1</th>
+<th>wins player_2</th>
+<th>wins chop</th>
+<th>winpct player_1</th>
+<th>winpct player_2</th>
+<th>winpct chop</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</body>
+</html>
