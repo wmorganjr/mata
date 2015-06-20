@@ -52,7 +52,8 @@ $(function() {
 </script>
 </head>
 <body>
-<h1>Equity Calculator - Updated June 16</h1>
+<a href='/runout.html'>Runout Tool</a>
+<h1>Equity Calculator - Updated June 20</h1>
 <a href='#changelog'>Changelog</a>
 <table>
 <tr>
@@ -106,9 +107,22 @@ ks                      The King of Spades
 Ts7c9s,Js,Qs,Ks,A,T     Ten of Spades,
                         Seven of Clubs, and
                         a range of Js, Qs, Ks, or any Ace or Ten
+
+Jc3c(3,J)               The Jc, the 3c, and either a 3 or a J
+KhAh5d(2,5,A,K)         Kh,Ah,5d, and any Deuce, Five, Ace or King
+*s                      Any spade
+*H                      Any heart
+
 </pre>
 <div id='changelog'>
 <ul>
+<li>June 20, 2015
+<ul>
+<li><b>Added runout calculator: </b><a href='/runout.html'>Runout Tool</a></li>
+<li>Added parenthesized ranges</li>
+<li>Added range of any card of a suit</li>
+</ul>
+</li>
 <li>June 16, 2015
 <ul>
 <li><b>Fixed a sampling bias that lowered equity of unsuited ranges</b></li>
